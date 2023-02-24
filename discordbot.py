@@ -69,7 +69,7 @@ async def usave(ctx, arg):
     cursor.execute("SELECT * FROM user_info WHERE name = %s", (str(user_id),))
     result = cursor.fetchone()
     if result:
-        cursor.execute("UPDATE user_info SET nickname = %s", (arg), )
+        cursor.execute("UPDATE user_info SET nickname = %s WHERE name = %s", (arg, str(user_id)))
         await ctx.send(f'서버에 닉네임이 업데이트되었습니다. ({arg})')
         db.commit()
     else:
