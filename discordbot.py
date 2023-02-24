@@ -5,7 +5,6 @@ from discord.ext import commands
 from dotenv import load_dotenv
 load_dotenv()
 
-PREFIX = os.environ['PREFIX']
 TOKEN = os.environ['TOKEN']
 
 PHOST = os.environ['PHOST']
@@ -25,17 +24,15 @@ except pymysql.err.OperationalError as e:
         raise e 
 
 
-intents = discord.Intents.default()
-intents.message_content = True
+Client = discord.Client()
+client = commands.Bot(command_prefix='!')
 
-bot = commands.Bot(command_prefix=PREFIX, intents=intents)
-
-@bot.event
+@client.event
 async def on_ready():
-    print(f'Logged in as {bot.user}.')
+    print(f'Logged in as {client.user}.')
 
 
-@bot.command(name='구인')
+@client.command(name='구인')
 async def aa(ctx, arg, *arg2):
     voice_channel = ctx.author.voice
 
@@ -57,12 +54,12 @@ async def aa(ctx, arg, *arg2):
         await ctx.send(embed=embed)
         #await embed.add_reaction('👍')
 
-@bot.error
+@client.error
 async def aa_error(ctx, error):
     print(error)
     await ctx.send(f"!구인 할말 추가할말")
 
-@bot.command(name='저장')
+@client.command(name='저장')
 async def usave(ctx, arg):
     user_id = ctx.author.id
 
@@ -88,7 +85,7 @@ def save_nickname(niname, nickname):
     cursor.execute(sql, (niname, nickname))
     db.commit()
 
-@bot.command(name='정보')
+@client.command(name='정보')
 async def uload(ctx):
     user_id = ctx.author.id
     sql = "SELECT nickname FROM user_info WHERE name = %s"
@@ -104,7 +101,7 @@ async def uload_error(ctx, error):
     print(error)
     await ctx.send(f"!정보 멘션")
 
-@bot.event
+@client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         pass
