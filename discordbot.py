@@ -110,6 +110,6 @@ async def on_command_error(ctx, error):
 
 
 try:
-    bot.run(TOKEN)
+    client.run(TOKEN)
 except discord.errors.LoginFailure as e:
     print("Improper token has been passed.")
