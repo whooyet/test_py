@@ -116,8 +116,6 @@ async def uload(ctx):
         user = await client.fetch_user(user_id)
         await ctx.send(f"{user.name}#{user.discriminator}: {nickname}")
 
-cursor.close()
-
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
