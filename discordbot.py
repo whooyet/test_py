@@ -24,7 +24,8 @@ except pymysql.err.OperationalError as e:
         raise e 
 
 
-Client = discord.Client()
+Client = discord.Intents.default()
+Client.message_content = True
 client = commands.Bot(command_prefix='!')
 
 @client.event
