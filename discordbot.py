@@ -5,6 +5,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 load_dotenv()
 
+
 TOKEN = os.environ['TOKEN']
 
 PHOST = os.environ['PHOST']
@@ -56,7 +57,7 @@ async def aa(ctx, arg, *arg2):
         await ctx.send(embed=embed)
         #await embed.add_reaction('👍')
 
-@client.error
+@aa.error
 async def aa_error(ctx, error):
     print(error)
     await ctx.send(f"!구인 할말 추가할말")
