@@ -90,7 +90,7 @@ def save_nickname(niname, nickname):
 
 @client.command(name='정보')
 async def uload(ctx, member: discord.Member):
-    user_id = member.mention
+    user_id = member.id
     sql = "SELECT nickname FROM user_info WHERE name = %s"
     cursor.execute(sql, (str(user_id),))
     result = cursor.fetchone()
