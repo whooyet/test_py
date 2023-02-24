@@ -66,7 +66,7 @@ async def aa_error(ctx, error):
 async def usave(ctx, arg):
     user_id = ctx.author.id
 
-    cursor.execute("SELECT * FROM user_info WHERE name = %s", (str(user_id),))
+    cursor.execute("SELECT user_info FROM user_info WHERE name = %s", (str(user_id),))
     result = cursor.fetchone()
     if result:
         cursor.execute("UPDATE user_info SET nickname = %s", (arg))
@@ -115,6 +115,8 @@ async def uload(ctx):
         nickname = row[1]
         user = await client.fetch_user(user_id)
         await ctx.send(f"{user.name}#{user.discriminator}: {nickname}")
+
+#cursor.close()
 
 @client.event
 async def on_command_error(ctx, error):
