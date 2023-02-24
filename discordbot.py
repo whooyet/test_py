@@ -1,32 +1,116 @@
-from cmath import log
+import discord, os
+import pymysql
 from distutils.sysconfig import PREFIX
-import discord
+from discord.ext import commands
 from dotenv import load_dotenv
-import os
 load_dotenv()
 
 PREFIX = os.environ['PREFIX']
 TOKEN = os.environ['TOKEN']
 
-client = discord.Client()
+PHOST = os.environ['PHOST']
+PUSER = os.environ['PUSER']
+PPS = os.environ['PPS']
+PPORT = os.environ['PPORT']
+PDB = os.environ['PDB']
 
-@client.event
+db = pymysql.connect(host=PHOST, user=PUSER, password=PPS, port=int(PPORT), database=PDB, charset='utf8')
+cursor = db.cursor()
+try:
+    cursor.execute("CREATE TABLE user_info (name char(30), nickname char(30))")
+except pymysql.err.OperationalError as e:
+    if e.args[0] == 1050:  # Table already exists
+        pass  # do nothing
+    else:
+        raise e 
+
+
+intents = discord.Intents.default()
+intents.message_content = True
+
+bot = commands.Bot(command_prefix='!', intents=intents)
+
+@bot.event
 async def on_ready():
-    print(f'Logged in as {client.user}.')
+    print(f'Logged in as {bot.user}.')
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
 
-    if message.content == f'{PREFIX}call':
-        await message.channel.send("callback!")
+@bot.command(name='구인')
+async def aa(ctx, arg, *arg2):
+    voice_channel = ctx.author.voice
 
-    if message.content.startswith(f'{PREFIX}hello'):
-        await message.channel.send('Hello!')
+    if voice_channel is None:
+        await ctx.channel.send("먼저 음성 채널에 들어가주세요.")
+    else:
+        aa = ctx.author.voice.channel
+        #invite = await aa.create_invite(unique=False, max_uses=100)
+
+        parameter = ' '.join(arg2)
+        members = ctx.author.voice.channel.members
+
+        embed=discord.Embed(title=f"{arg}", description=f"{ctx.author.mention} 님이 구인중")
+        embed.add_field(name="채널명", value=f"{aa.mention}", inline=True)
+        embed.add_field(name="맴버", value=f"{len(members)}명", inline=True)
+        embed.set_footer(text=f"{parameter}")
+
+        await ctx.message.delete()
+        await ctx.send(embed=embed)
+        #await embed.add_reaction('👍')
+
+@bot.error
+async def aa_error(ctx, error):
+    print(error)
+    await ctx.send(f"!구인 할말 추가할말")
+
+@bot.command(name='저장')
+async def usave(ctx, arg):
+    user_id = ctx.author.id
+
+    cursor.execute("SELECT * FROM user_info WHERE name = %s", (str(user_id),))
+    result = cursor.fetchone()
+    if result:
+        cursor.execute("UPDATE user_info SET nickname = %s", (arg))
+        await ctx.send(f'서버에 닉네임이 업데이트되었습니다. ({arg})')
+        db.commit()
+    else:
+        save_nickname(user_id, arg)
+        await ctx.send('서버에 저장이되었습니다.')
+
+@usave.error
+async def usave_error(ctx, error):
+    print(error)
+    await ctx.send(f"!저장 닉네임")
+
+
+# 닉네임 저장
+def save_nickname(niname, nickname):
+    sql = "INSERT INTO user_info (name, nickname) VALUES (%s, %s)"
+    cursor.execute(sql, (niname, nickname))
+    db.commit()
+
+@bot.command(name='정보')
+async def uload(ctx):
+    user_id = ctx.author.id
+    sql = "SELECT nickname FROM user_info WHERE name = %s"
+    cursor.execute(sql, (str(user_id),))
+    result = cursor.fetchone()
+    if result:
+        await ctx.send(f'닉네임: {result[0]}')
+    else:
+        await ctx.send('정보를 찾을 수 없습니다.')
+
+@uload.error
+async def uload_error(ctx, error):
+    print(error)
+    await ctx.send(f"!정보 멘션")
+
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        pass
 
 
 try:
-    client.run(TOKEN)
+    bot.run(TOKEN)
 except discord.errors.LoginFailure as e:
     print("Improper token has been passed.")
