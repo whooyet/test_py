@@ -59,7 +59,7 @@ async def aa(ctx, arg, *arg2):
 
 @aa.error
 async def aa_error(ctx, error):
-    print(error)
+    print(f'구인 {error}')
     await ctx.send(f"!구인 할말 추가할말")
 
 @client.command(name='저장')
@@ -78,7 +78,7 @@ async def usave(ctx, arg):
 
 @usave.error
 async def usave_error(ctx, error):
-    print(error)
+    print(f'저장 {error}')
     await ctx.send(f"!저장 닉네임")
 
 
@@ -101,7 +101,7 @@ async def uload(ctx, member: discord.Member):
 
 @uload.error
 async def uload_error(ctx, error):
-    print(error)
+    print(f'정보 {error}')
     await ctx.send(f"!정보 멘션")
 
 @client.command(name='이건알기가정말힘들지몰라하지만난멋있어')
