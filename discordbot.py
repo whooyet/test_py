@@ -117,7 +117,7 @@ async def uload(ctx):
         user_id = row[0]  # 유저의 고유 ID를 가져옴
         nickname = row[1]
         user = await client.fetch_user(user_id)
-        await ctx.send(f"```{user.name}#{user.discriminator}: {nickname}```")
+        await ctx.send(f"```md\n[{user.name}#{user.discriminator}][{nickname}]\n```")
 
 #cursor.close()
 
