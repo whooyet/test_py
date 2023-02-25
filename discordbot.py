@@ -117,8 +117,7 @@ async def uload(ctx):
         user_id = row[0]  # 유저의 고유 ID를 가져옴
         nickname = row[1]
         user = await client.fetch_user(user_id)
-        embed.add_field(name=f"{user.name}#{user.discriminator}", value=f"{nickname}", inline=True)
-    await ctx.send(embed=embed)
+        await ctx.send(f"```{user.name}#{user.discriminator}: {nickname}```")
 
 #cursor.close()
 
