@@ -17,7 +17,7 @@ PDB = os.environ['PDB']
 db = pymysql.connect(host=PHOST, user=PUSER, password=PPS, port=int(PPORT), database=PDB, charset='utf8')
 cursor = db.cursor()
 try:
-    cursor.execute("CREATE TABLE user_info (name char(30), nickname char(30))")
+    cursor.execute("CREATE TABLE user_info (name char(30), nickname char(128))")
 except pymysql.err.OperationalError as e:
     if e.args[0] == 1050:  # Table already exists
         pass  # do nothing
