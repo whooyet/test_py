@@ -107,6 +107,9 @@ async def uload_error(ctx, error):
 @client.command(name='이건알기가정말힘들지몰라하지만난멋있어')
 async def uload(ctx):
     await ctx.message.delete()
+
+    embed=discord.Embed(title="유저 정보")
+
     cursor.execute("SELECT * FROM user_info ORDER BY name")
     result = cursor.fetchall()
 
@@ -114,7 +117,8 @@ async def uload(ctx):
         user_id = row[0]  # 유저의 고유 ID를 가져옴
         nickname = row[1]
         user = await client.fetch_user(user_id)
-        await ctx.send(f"{user.name}#{user.discriminator}: {nickname}")
+        embed.add_field(name=f"{user.name}#{user.discriminator}", value=f"{nickname}", inline=True)
+    await ctx.send(embed=embed)
 
 #cursor.close()
 
