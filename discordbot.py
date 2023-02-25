@@ -113,6 +113,8 @@ async def uload(ctx):
     cursor.execute("SELECT * FROM user_info ORDER BY name")
     result = cursor.fetchall()
 
+    msg = "```md\n"
+
     for row in result:
         user_id = row[0]  # 유저의 고유 ID를 가져옴
         nickname = row[1]
