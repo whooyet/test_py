@@ -116,7 +116,7 @@ async def uload(ctx):
     for row in result:
         user_id = row[0]  # 유저의 고유 ID를 가져옴
         nickname = row[1]
-        user = await bot.fetch_user(user_id)
+        user = await client.fetch_user(user_id)
         msg += f"[{user.name}#{user.discriminator}][{nickname}]\n"
     msg += "```"
     await ctx.send(msg)
